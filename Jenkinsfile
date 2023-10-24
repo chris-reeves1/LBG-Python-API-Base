@@ -22,10 +22,10 @@ pipeline {
                     sh 'gcloud auth configure-docker --quiet'
 
                     // Build the Docker image
-                    sh "docker build -t ${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER} ."
+                    sh "docker build -t ${GCR_URL}/${IMAGE_NAME}:latest ."
 
                     // Push the Docker image to GCR
-                    sh "docker push ${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER}"
+                    sh "docker push ${GCR_URL}/${IMAGE_NAME}:latest"
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     // Update the image in your deployment.yaml file
-                    sh "sed -i 's|${GCR_URL}/${IMAGE_NAME}:latest|${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER}|g' kubernetes/deployment.yaml"
+                    //sh "sed -i 's|${GCR_URL}/${IMAGE_NAME}:latest|${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER}|g' kubernetes/deployment.yaml"
                     
                     // Deploy to GKE using Jenkins Kubernetes Engine Plugin
                     step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'kubernetes/deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
