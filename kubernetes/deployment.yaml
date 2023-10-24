@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: flask-service
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: flask
   ports:
@@ -18,7 +18,7 @@ metadata:
   labels:
     app: flask
 spec:
-  replicas: 5
+  replicas: 2
   selector:
     matchLabels:
       app: flask
