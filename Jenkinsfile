@@ -7,7 +7,7 @@ pipeline {
         PROJECT_ID = 'lbg-uplift-project'
         CLUSTER_NAME = 'demo-cluster'
         LOCATION = 'europe-west2-c'
-        CREDENTIALS_ID = 'lbg-uplift-project'
+        CREDENTIALS_ID = '78601110-14f4-4984-ac21-ad5e0684f98c'
     }
     stages {
         stage('Build and Push to GCR') {
