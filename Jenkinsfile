@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        GCR_CREDENTIALS_ID = 'gcp' // The ID you provided in Jenkins credentials
+        GCR_CREDENTIALS_ID = 'gcp'
         IMAGE_NAME = 'test-image-5'
         GCR_URL = 'gcr.io/lbg-uplift-project'
         PROJECT_ID = 'lbg-uplift-project'
@@ -11,26 +11,27 @@ pipeline {
     }
     stages {
         stage('Build and Push to GCR') {
-    steps {
-        script {
-            // Authenticate with Google Cloud
-            withCredentials([file(credentialsId: GCR_CREDENTIALS_ID, variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+            steps {
+                script {
+                    // Authenticate with Google Cloud
+                    withCredentials([file(credentialsId: GCR_CREDENTIALS_ID, variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                        sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                    }
+
+                    // Configure Docker to use gcloud as a credential helper
+                    sh 'gcloud auth configure-docker --quiet'
+
+                    // Build the Docker image
+                    sh "docker build -t ${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER} ."
+
+                    // Push the Docker image to GCR
+                    sh "docker push ${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER}"
+                }
             }
-
-            // Configure Docker to use gcloud as a credential helper
-            sh 'gcloud auth configure-docker --quiet'
-
-            // Build the Docker image
-            sh "docker build -t ${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER} ."
-
-            // Push the Docker image to GCR
-            sh "docker push ${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER}"
         }
-    }
-        stage('deploy to GKE') {
-    steps {
-        script {
+        stage('Deploy to GKE') {
+            steps {
+                script {
                     // Update the image in your deployment.yaml file
                     sh "sed -i 's|${GCR_URL}/${IMAGE_NAME}:latest|${GCR_URL}/${IMAGE_NAME}:${BUILD_NUMBER}|g' kubernetes/deployment.yaml"
                     
@@ -39,7 +40,6 @@ pipeline {
                 }
             }
         }
-
-        }
     }
 }
+
