@@ -64,4 +64,5 @@ class MyLbgApiTestCase(unittest.TestCase):
 # module import protection
 
 if __name__ == '__main__':
-    unittest.main(verbosity=2)
+    print(f'API Listening on http://{HOST}:{PORT}')
+    app.run(host=HOST, port=PORT, debug=True)
