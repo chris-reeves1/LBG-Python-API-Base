@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         GCR_CREDENTIALS_ID = 'gcp'
-        IMAGE_NAME = 'test-image-5'
+        IMAGE_NAME = 'test-image-6'
         GCR_URL = 'gcr.io/lbg-uplift-project'
         PROJECT_ID = 'lbg-uplift-project'
         CLUSTER_NAME = 'demo-cluster'
